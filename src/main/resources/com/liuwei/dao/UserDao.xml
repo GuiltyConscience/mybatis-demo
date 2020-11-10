@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace：给哪个接口配置的映射，写接口的全限定类名-->
+<mapper namespace="com.liuwei.dao.UserDao">
+
+    <sql id="user">
+        select *from user
+    </sql>
+    <!--select标签：表示要执行查询语句； id：给接口里哪个方法配置的，写方法名；resultType：结果集封装类型-->
+    <select id="findAll" resultType="com.liuwei.domain.User">
+        <include refid="user"></include>
+    </select>
+
+    <insert id="add" parameterType="com.liuwei.domain.User">
+        insert into user (id,username,birthday,sex,address) values (#{id},#{username},#{birthday},#{sex},#{address})
+    </insert>
+
+    <update id="update" parameterType="com.liuwei.domain.User">
+        update user set username=#{username},birthday=#{birthday},sex=#{sex},address=#{address} where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        delete  from user where id = #{id}
+    </delete>
+
+    <select id="findById" parameterType="int" resultType="com.liuwei.domain.User">
+        select user.id,user.address, user.username, user.birthday from  user  where  id=#{id}
+    </select>
+
+    <select id="like" parameterType="string" resultType="com.liuwei.domain.User">
+        select *from user  where username like #{name}
+    </select>
+
+    <select id="Count" resultType="int">
+        select count(*) from  user
+    </select>
+
+ <select id="findListUserName" parameterType="ListUser" resultType="user">
+        select *from  user where username like #{user.username}
+    </select>
+
+
+    <select id="findByVO" parameterType="QueryVO" resultType="User">
+   select * from user where username like #{user.username}
+    </select>
+
+
+    <resultMap id="resultUser2" type="com.liuwei.domain.User2">
+        <id property="userId" column="id"/>
+        <!--result标签：非主键字段配置。 property：JavaBean的属性名；  column：字段名-->
+        <result property="username" column="username"/>
+        <result property="userBirthday" column="birthday"/>
+        <result property="userAddress" column="address"/>
+        <result property="userSex" column="sex"/>
+    </resultMap>
+
+
+    <select id="findUser2All" resultMap="resultUser2">
+        select *from  user
+    </select>
+
+
+    <select id="search" resultType="user" parameterType="user">
+        select *from user
+        <where>
+            <if test="username != null">
+                and  username like  #{username}
+            </if>
+            <if test="sex != null">
+                and sex = #{sex}
+            </if>
+        </where>
+    </select>
+    <select id="findArrayList" parameterType="QueryVO" resultType="User">
+        select *from user
+        <where>
+            <foreach collection="ids" open="and id in (" item="id" separator="," close=")">
+                #{id}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="queryAllUsers" resultMap="userAccountsMap">
+        select  u.* , a.id as aid, a.UID as uid, a.MONEY from user u LEFT JOIN account a on u.id = a.UID;
+    </select>
+    <resultMap id="userAccountsMap" type="user">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="birthday" column="birthday"/>
+        <result property="sex" column="sex"/>
+        <result property="address" column="address"/>
+        <collection property="accounts" ofType="account">
+            <id property="id" column="aid"/>
+            <result property="uid" column="uid"/>
+            <result property="money" column="money"/>
+        </collection>
+    </resultMap>
+
+   <!-- <select id="queryAllUsers" resultMap="userAccountsMap">
+    SELECT a.id aid, a.uid uid, a.money money, u.* FROM USER u LEFT JOIN account a
+    ON u.id = a.uid
+ </select>
+    <resultMap id="userAccountsMap" type="user">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="birthday" column="birthday"/>
+        <result property="sex" column="sex"/>
+        <result property="address" column="address"/>
+
+        &lt;!&ndash;
+           collection:用于封装JavaBean中某一属性关联的集合，用于一对多情形
+           property：封装哪个属性关联的集合
+           ofType：集合中的数据类型是什么。这里是com.itheima.domain.Account，使用了别名
+        &ndash;&gt;
+        <collection property="accounts" ofType="account">
+            <id property="id" column="aid"/>
+            <result property="uid" column="uid"/>
+            <result property="money" column="money"/>
+        </collection>
+    </resultMap>-->
+</mapper>

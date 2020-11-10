@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace：给哪个接口配置的映射，写接口的全限定类名-->
+<mapper namespace="com.liuwei.dao.AccountDao">
+
+    <sql id="account">
+        select a.id as aid, a.UID as uid, a.MONEY , u.* from account a  LEFT join `user` u on a.UID = u.id
+    </sql>
+
+    <select id="findAccountAll" resultMap="AccountMap">
+        <include refid="account"/>
+    </select>
+    <resultMap id="AccountMap" type="account">
+        <id property="id" column="aid"/>
+        <result column="uid" property="uid"/>
+        <result column="money" property="money"/>
+        <association property="user" javaType="user">
+            <result property="id" column="id"/>
+            <result property="username" column="username"/>
+            <result property="birthday" column="birthday"/>
+            <result property="sex" column="sex"/>
+            <result property="address" column="address"/>
+        </association>
+    </resultMap>
+</mapper>

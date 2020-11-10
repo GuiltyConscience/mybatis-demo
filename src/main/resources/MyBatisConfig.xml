@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!--mybatis的核心配置文件，主要配置数据库连接信息-->
+<configuration>
+
+
+    <properties resource="jdbc.properties"/>
+
+    <typeAliases>
+        <package name="com.liuwei.domain"/>
+    </typeAliases>
+    <!--配置默认的数据库环境-->
+    <environments default="mysql_mybatis">
+        <!--定义一个数据库连接环境-->
+        <environment id="mysql_mybatis">
+            <!--设置事务管理方式，固定值JDBC-->
+            <transactionManager type="JDBC"/>
+            <!--设置数据源，POOLED，UNPOOLED，JNDI，我们使用POOLED-->
+            <dataSource type="POOLED">
+                <!-- 使用${OGNL}表达式，获取从properties中得到的配置信息 -->
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+
+
+    </environments>
+
+    <!--  !!!配置映射文件的位置!!!!!!!!!!!!!!这一步千万不要忘记!!!!!!!!!!!!!!  -->
+    <mappers>
+        <package name="com.liuwei.dao" />
+    </mappers>
+
+
+    <!--
+            <typeAliases>
+     type：要指定别名的全限定类名    alias：别名
+    <typeAlias type="com.itheima.domain.QueryVO" alias="vo"/>
+    <typeAlias type="com.itheima.domain.User" alias="user"/>
+    <typeAlias type="com.itheima.domain.User2" alias="user2"/>
+    </typeAliases>
+    -->
+
+</configuration>
